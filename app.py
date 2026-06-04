@@ -56,7 +56,7 @@ def generate_all_sheets():
             'order_id': [f"order_{i}" for i in range(size)],
             'customer_id': [f"cust_{i}" for i in range(size)],
             'order_status': np.random.choice(['delivered', 'shipped', 'canceled', 'invoiced'], size, p=[0.9, 0.05, 0.03, 0.02]),
-            'order_purchase_timestamp': pd.date_range(start='2025-01-01', periods=size, freq='H')
+            'order_purchase_timestamp': pd.date_range(start='2025-01-01', periods=size, freq='h')
         }),
         "olist_products_dataset": pd.DataFrame({
             'product_id': [f"prod_{i}" for i in range(size)],
