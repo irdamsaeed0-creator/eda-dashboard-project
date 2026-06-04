@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 st.set_page_config(page_title="Multi-Sheet EDA Dashboard", layout="wide")
 st.title("📊 Multi-Sheet Data Visualization Dashboard")
@@ -12,12 +13,26 @@ sns.set_theme(style="whitegrid")
 
 @st.cache_data
 def load_all_sheets():
-    # Reading sheets from the combined Excel document
-    excel_path = 'data/combined_sheets.xlsx'
-    try:
-        return pd.read_excel(excel_path, sheet_name=None)
-    except FileNotFoundError:
-        return pd.read_excel('../data/combined_sheets.xlsx', sheet_name=None)
+    # Cloud aur Local dono par file sahi dhoondne ke liye automatic paths
+    paths_to_try = [
+        'data/combined_sheets.xlsx',
+        '../data/combined_sheets.xlsx',
+        os.path.join(os.path.dirname(__file__), 'data', 'combined_sheets.xlsx') if '__file__' in locals() else None
+    ]
+    
+    last_error = None
+    for excel_path in paths_to_try:
+        if excel_path and os.path.exists(excel_path):
+            try:
+                return pd.read_excel(excel_path, sheet_name=None)
+            except Exception as e:
+                last_error = e
+                
+    # Agar excel file na mile ya load na ho paye, to safely error raise hoga
+    if last_error:
+        raise last_error
+    else:
+        raise FileNotFoundError("Excel workbook 'data/combined_sheets.xlsx' nahi mili.")
 
 try:
     all_sheets = load_all_sheets()
